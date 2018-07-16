@@ -5,8 +5,9 @@ The input list_of_ints will always have at least three integers.
 '''
 import random
 import time
+import timer
 
-def max_3_prod(nums):
+def max_3_prod1(nums):
 	'''
 	Maintain largest current product of 3, 2 and 1 through each step
 	'''
@@ -40,6 +41,7 @@ def max_3_prod2(nums):
 	'''
 	if len(nums) < 3:
 		raise ValueError('List must have at least 3 elements to find the largest product of 3.')
+
 	max_3 = sorted(nums[0:3])
 	min_2 = sorted(nums[0:2], reverse=True)
 
@@ -69,16 +71,15 @@ def max_3_prod3(nums):
 	min_2 = sorted(nums[0:2], reverse=True)
 
 	insert_extreme(min_2, nums[2], False)
-
 	for m in nums[3:]:
+
 		if (m > max_3[0]):
 			i = 1
 			while i < len(max_3) and (m > max_3[i]):
 				i += 1
 			max_3.insert(i,m)
 			max_3.pop(0)
-
-		elif (m < min_2[0]):
+		if (m < min_2[0]):
 			i = 1
 			while i < len(min_2) and (m < min_2[i]):
 				i += 1
@@ -87,44 +88,14 @@ def max_3_prod3(nums):
 
 	return max(max_3[2] * max_3[1] * max_3[0], min_2[1] * min_2[0] * max_3[2])
 
-def test():
-	time1 = []
-	time2 = []
-	time3 = []
-	for i in range(600):
-		a = [random.randint(-1000,1000) for _ in range(random.randint(3,50))]
-		
-		start = time.time()
-		c = max_3_prod2(a)
-		end = time.time()
-		time2.append(end - start)
 
-		start = time.time()
-		b = max_3_prod(a)
-		end = time.time()
-		time1.append(end - start)
+def makeRandArr(num_trials, largest_array, largest_int, smallest_int):
+	return [random.randint(smallest_int,largest_int) for _ in range(random.randint(3,largest_array))]
 
-		start = time.time()
-		d = max_3_prod3(a)
-		end = time.time()
-		time3.append(end - start)
+test_params = [60,50000,10,-10]
+print(timer.timeFuncs([max_3_prod1, max_3_prod2, max_3_prod3],makeRandArr, test_params, 10000))
 
-		if b != c or d != c:
-			print(a,b,c)
-			return
-
-	print(sum(time1))
-	print(sum(time2))
-	print(sum(time3))
-
-# print(max_3_prod2([2, 30, 34, -2, -14]))
-# print(max_3_prod([2, 30, 34, -2, -14]))
-test()
-# print(max_3_prod([1,2,3,4,5]))
-# print(max_3_prod([0,1,-6,5]))
-# print(max_3_prod([-1,-2,-3,-4]))
-# print(max_3_prod([-1,-2,0,-3,-4]))
-# print(max_3_prod([1,-2,-3,-4]))
-# print(max_3_prod([1,3,8,2,-2,-6,-5,-3]))
-
+# Output with
+# test_params = [600,5000,1000,-1000]
+# [42.93114352226257, 11.546314239501953, 3.6002357006073]
 
