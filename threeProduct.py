@@ -5,7 +5,7 @@ The input list_of_ints will always have at least three integers.
 '''
 import random
 import time
-import timer
+import f_timer
 
 def max_3_prod1(nums):
 	'''
@@ -89,11 +89,11 @@ def max_3_prod3(nums):
 	return max(max_3[2] * max_3[1] * max_3[0], min_2[1] * min_2[0] * max_3[2])
 
 
-def makeRandArr(num_trials, largest_array, largest_int, smallest_int):
+def makeRandArr(largest_array, largest_int, smallest_int):
 	return [random.randint(smallest_int,largest_int) for _ in range(random.randint(3,largest_array))]
 
-test_params = [60,50000,10,-10]
-print(timer.timeFuncs([max_3_prod1, max_3_prod2, max_3_prod3],makeRandArr, test_params, 10000))
+test_params = [50000,10,-10]
+print(f_timer.time_funcs([max_3_prod1, max_3_prod2, max_3_prod3],makeRandArr, test_params, 10000))
 
 # Output with
 # test_params = [600,5000,1000,-1000]
