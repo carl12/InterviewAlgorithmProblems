@@ -18,6 +18,7 @@ by calculating:
 Here's the catch: You can't use division in your solution! 
 '''
 import random
+import f_timer
 
 def prod_all_except_curr_v2(nums):
 	'''
@@ -97,7 +98,12 @@ def test_prods():
 
 	print('done testing')
 	
-test_prods()
+# test_prods()
+
+def gen_rand_arr(largest_array, largest_int, smallest_int):
+	return [random.randint(-5,10) for _ in range(random.randrange(2,10))]
+
+print(f_timer.time_funcs([prod_all_except_curr, prod_all_except_curr_v2, naive_prod], gen_rand_arr, [10000,100,-50], 1000000))
 
 # print(prod_all_except_curr_v2([1,2,3,4,5]))
 # print(prod_all_except_curr_v2([1,7,3,4]))
