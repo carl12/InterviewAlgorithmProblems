@@ -90,7 +90,7 @@ def max_3_prod3(nums):
 
 
 def makeRandArr(largest_array, largest_int, smallest_int):
-	return [random.randint(smallest_int,largest_int) for _ in range(random.randint(3,largest_array))]
+	return [[random.randint(smallest_int,largest_int) for _ in range(random.randint(3,largest_array))]]
 
 test_params = [50000,10,-10]
 print(f_timer.time_funcs([max_3_prod1, max_3_prod2, max_3_prod3],makeRandArr, test_params, 10000))

@@ -82,26 +82,8 @@ def naive_prod(nums):
 	return products
 
 
-
-def test_prods():
-	trials = 100
-	for i in range(trials):
-		arr = [random.randint(-5,10) for _ in range(random.randrange(2,10))]
-		a = prod_all_except_curr_v2(arr)
-		b = prod_all_except_curr(arr)
-		c = naive_prod(arr)
-		if a != b or b != c:
-			print(arr)
-			print(a,b,c)
-			break;
-		print(arr,a) 
-
-	print('done testing')
-	
-# test_prods()
-
 def gen_rand_arr(largest_array, largest_int, smallest_int):
-	return [random.randint(-5,10) for _ in range(random.randrange(2,10))]
+	return [[random.randint(-5,10) for _ in range(random.randrange(2,10))]]
 
 print(f_timer.time_funcs([prod_all_except_curr, prod_all_except_curr_v2, naive_prod], gen_rand_arr, [10000,100,-50], 1000000))
 
