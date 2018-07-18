@@ -1,6 +1,10 @@
 import time
 
 def time_funcs(functions, generatorFunc, generatorInput, iterations):
+	return get_func_time_and_res(functions, generatorFunc, generatorInput, iterations)[0]
+
+
+def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations):
 
 	times = [[] for _ in functions]
 	results = [[] for _ in functions]
@@ -13,10 +17,10 @@ def time_funcs(functions, generatorFunc, generatorInput, iterations):
 
 		for j in range(len(functions)-1):
 			if results[j][i] != results[j+1][i]:
-				print(funcInput,results[j][i],results[j+1][i],'results differ')
+				print(results[j][i],results[j+1][i],'results differ')
+				return funcInput
 
-	return [sum(func_times) for func_times in times]
-
+	return ([sum(func_times) for func_times in times], results[0])
 
 
 
