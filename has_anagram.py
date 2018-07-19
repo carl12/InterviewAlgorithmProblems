@@ -104,14 +104,3 @@ def gen_rand_str(maxLong, maxSub):
 
 
 print(f_timer.time_funcs([has_anagram1, has_anagram2],gen_rand_str, [1000,11],10000))
-# a = 'haqlkwbocnxjvfqbulrzvvvkfmtcceknszwvjaznqybyrqrjdybwpobcuegtlevnxcvgngeiwcgainuydkaywctchcqwqlbidoamhuazrvcpwotnwicogzcfkycblzyyogrtptvpuunuxhokmqcwkmzedjunilhiasgewwykludsocjfhsenolrlejoyryqkjyoehadepksfnxjulzmzcaeugypcrimmioszxgyiibdzccjhnfzsjfysofwcsuwdlaxmimzprmuooyrkwsebacmnmwahgiqgmprzyycybojxlycgafgvupvzwzfdkewdrawrfpxckxfddlhonluzkqsvmvzwvkrbyofohtveiqqiwzqfurwiyoczfggzijanbywiutkxgpvzjvkkweukuetkzhuvemnzefkhptjoxfjvpkhdjixpdjodplyterovywjmtooqpasjswcscqspoarpwgwpbhcwkwimlqidqqbvebrrnpvbsqozdercaivpkuiuxnohrilaqwznhqjxggcypstyesbzosdg'
-# print(len(a))
-# c = a[290:296]
-# print(c)
-# b = 'ecy'
-# print(has_anagram2(c,b))
-# print(has_anagram1(c,b))
-
-# print(has_anagram2('qpxpqo','poxq'))
-
-# 'abcbda','abc'
