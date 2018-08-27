@@ -4,6 +4,25 @@
 # then the function returns True. Your function definition should
 # look like: question1(s, t) and return a boolean True or False.
 
+'''
+There are several different functions, which all give the correct output. Has_anagram2 
+is my first attempt which runs normally in linear time. The only issue is that the function
+completely reinitializes the dictionary every time it finishes a series of valid characters. 
+That means that the function might run in O(mn) time if many of the characters in the long 
+string are found in the substring seperated by characters which are not in the substring. 
+I created has_anagram3 with cleaner logic and which sequentially re-increments values into 
+the dict. That means the function runs in linear time even on bad inputs. 
+    
+Despite this better theoretical runtime, has_anagram2 appears to run faster even on 'bad input'
+when the substring size is small. If the strings are given max sizes of 1000, and 100, however, 
+has_anagram3_2 outperforms it. 
+
+One thing that is more optimal about has_anagram2 is that is does not increment anything
+if correct value is found. This will be the majority of cases, so it might explain it 
+running faster. However, keeping a running value of start makes more intuitive sense to 
+me than changing it from None to a value. It simulates the window moving forwards.
+'''
+
 
 
 from itertools import permutations
@@ -85,39 +104,21 @@ def has_anagram4(parent, child):
     # print(total)
     return total > 0
 
-def has_anagram1(s, t):
 
-    # We confirm that s is longer than t.
-    # If not, we know it cannot be a substring.
-    if (len(t) > len(s)):
-        return False
 
-    # Convert to lowercase so this function is not case-sensitive.
-    s = s.lower()
-    t = t.lower()
-
-    t = list(t)
-    for j in permutations(t):
-        if ''.join(j) in s:
-            return True
-
-    return False
-
-def has_anagram2(s_raw,t_raw, debug = False):
+def has_anagram2(s, t, debug = False):
     # make a hashmap of all characters in t
         # all characters map to the number of that character in t
     # for each char in s
         # if that char is in t, decrement the hashmap
     # Check to see if all values in hashmap are less than zero
 
-    if len(t_raw) == 0:
+    if len(t) == 0:
         return True
 
-    if len(s_raw) == 0:
+    if len(s) < len(t):
         return False
 
-    s = s_raw.lower()
-    t = t_raw.lower()
 
     char_map = {}
     for c in t:
@@ -175,18 +176,18 @@ def has_anagram3(s,t, debug = False):
         return False
 
     # Build hash tracker
-    trackOg = {};
+    track = {};
     for c in t:
-        if(trackOg.get(c)):
-            trackOg[c] += 1
+        if(track.get(c)):
+            track[c] += 1
         else:
-            trackOg[c] = 1
+            track[c] = 1
 
     #Init place values
     start = 0
     curr = 0
     anLen = len(t)
-    track = trackOg.copy()
+    track = track
 
     while(curr < len(s)):
         c = s[curr]
@@ -241,34 +242,33 @@ def has_anagram3_2(s,t, debug = False):
     anLen = len(t)
     track = trackOg.copy()
 
-    for c in s:
-        # c = s[curr]
-        if debug and curr != start:
+    for i,c in enumerate(s):
+        # c = s[i]
+        if debug and i != start:
             print('---------')
-            print(curr, start)
-            print(s[start:curr])
+            print(i, start)
+            print(s[start:i])
             print(track)
 
         if track.get(c) is not None:
             if track[c] > 0:
                 track[c] -= 1
             elif track[c] == 0:
-                while(track[c] == 0 and start < curr):
+                while(track[c] == 0 and start < i):
                     track[s[start]] += 1
                     start+=1
                 track[c] = 0
 
-        elif start == curr:
+        elif start == i:
             start += 1
         else:
             track = trackOg.copy()
-            start = curr+1
+            start = i+1
 
-        if curr - start == anLen - 1:
-            if debug: print(curr)
+        if i - start == anLen - 1:
+            if debug: print(i)
             return True
 
-        curr += 1
 
     return False
 
@@ -280,6 +280,9 @@ def gen_rand_str(maxLong, maxSub):
     str_sub = ''.join(random.choices(string.ascii_lowercase, k=len_sub))
 
     return (str_long, str_sub)
+
+def gen_bad_str(maxLong, maxSub):
+    return ['ab'*maxLong, 'a'*maxSub]
 
 
 print(f_timer.time_funcs([ has_anagram2, has_anagram3, has_anagram3_2],gen_rand_str, [1000,11],10000))
