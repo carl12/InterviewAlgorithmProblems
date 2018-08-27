@@ -7,10 +7,83 @@
 
 
 from itertools import permutations
+from functools import reduce
 import random
 import string
 import f_timer
+# Simple function that will take a string of latin characters and return a unique hash
+def hashString(str):
+  # Map characters to prime numbers to multiply
+    charMap = {
+    'a': 2,
+    'b': 3,
+    'c': 5,
+    'd': 7,
+    'e': 11,
+    'f': 13,
+    'g': 17,
+    'h': 19,
+    'i': 23,
+    'j': 29,
+    'k': 31,
+    'l': 37,
+    'm': 41,
+    'n': 43,
+    'o': 47,
+    'p': 53,
+    'q': 59,
+    'r': 61,
+    's': 67,
+    't': 71,
+    'u': 73,
+    'v': 79,
+    'w': 83,
+    'x': 89,
+    'y': 97,
+    'z': 101,
+    'A': 103,
+    'B': 107,
+    'C': 109,
+    'D': 113,
+    'E': 127,
+    'F': 131,
+    'G': 137,
+    'H': 139,
+    'I': 149,
+    'J': 151,
+    'K': 163,
+    'L': 167,
+    'M': 173,
+    'N': 179,
+    'O': 181,
+    'P': 191,
+    'Q': 193,
+    'R': 197,
+    'S': 199,
+    'T': 211,
+    'U': 223,
+    'V': 227,
+    'W': 229,
+    'X': 233,
+    'Y': 239,
+    'Z': 241
+  }
 
+    return reduce(lambda memo, char: memo * charMap[char], list(str), 1);
+
+def has_anagram4(parent, child):
+    '''
+    Code and helper function from 
+    '''
+    length = len(child)
+    anagram = hashString(child)
+    total = 0
+
+    for i in range(0, len(parent) - length + 1):
+        if hashString(parent[i: i + length]) == anagram:
+            total = total + 1
+    # print(total)
+    return total > 0
 
 def has_anagram1(s, t):
 
@@ -30,7 +103,7 @@ def has_anagram1(s, t):
 
     return False
 
-def has_anagram2(s_raw,t_raw):
+def has_anagram2(s_raw,t_raw, debug = False):
     # make a hashmap of all characters in t
         # all characters map to the number of that character in t
     # for each char in s
@@ -79,19 +152,125 @@ def has_anagram2(s_raw,t_raw):
                 char_map_copy = char_map.copy()
             else: 
                 char_map_copy[c] -= 1
-        elif char_map_copy.get(c):
+        elif char_map_copy.get(c) is not None:
             start = i
             char_map_copy[c] -= 1
 
         if (start is not None) and i-start == len(t)-1:
             # print(start,i,char_map)
             # print(i,start,char_map_copy)
+            # print(i)
+            if(debug):
+                print(i)
             return True
 
 
 
     return False
 
+def has_anagram3(s,t, debug = False):
+    if t is None or len(t) == 0:
+        return True
+    if s is None or len(s) == 0:
+        return False
+
+    # Build hash tracker
+    trackOg = {};
+    for c in t:
+        if(trackOg.get(c)):
+            trackOg[c] += 1
+        else:
+            trackOg[c] = 1
+
+    #Init place values
+    start = 0
+    curr = 0
+    anLen = len(t)
+    track = trackOg.copy()
+
+    while(curr < len(s)):
+        c = s[curr]
+        if debug and curr != start:
+            print('---------')
+            print(curr, start)
+            print(s[start:curr])
+            print(track)
+
+        if track.get(c) is not None:
+            if track[c] > 0:
+                track[c] -= 1
+            elif track[c] == 0:
+                while(track[c] == 0 and start < curr):
+
+                    track[s[start]] += 1
+                    start+=1
+                track[c] = 0
+
+        else:
+            while(start < curr):
+                track[s[start]] += 1
+                start += 1
+            # track = trackOg.copy()
+            start = curr+1
+
+        if curr - start == anLen - 1:
+            if debug: print(curr)
+            return True
+
+        curr += 1
+
+    return False
+
+def has_anagram3_2(s,t, debug = False):
+    if t is None or len(t) == 0:
+        return True
+    if s is None or len(s) == 0:
+        return False
+
+    # Build hash tracker
+    trackOg = {};
+    for c in t:
+        if(trackOg.get(c)):
+            trackOg[c] += 1
+        else:
+            trackOg[c] = 1
+
+    #Init place values
+    start = 0
+    curr = 0
+    anLen = len(t)
+    track = trackOg.copy()
+
+    for c in s:
+        # c = s[curr]
+        if debug and curr != start:
+            print('---------')
+            print(curr, start)
+            print(s[start:curr])
+            print(track)
+
+        if track.get(c) is not None:
+            if track[c] > 0:
+                track[c] -= 1
+            elif track[c] == 0:
+                while(track[c] == 0 and start < curr):
+                    track[s[start]] += 1
+                    start+=1
+                track[c] = 0
+
+        elif start == curr:
+            start += 1
+        else:
+            track = trackOg.copy()
+            start = curr+1
+
+        if curr - start == anLen - 1:
+            if debug: print(curr)
+            return True
+
+        curr += 1
+
+    return False
 
 def gen_rand_str(maxLong, maxSub):
     len_long = random.randint(0,maxLong)
@@ -103,4 +282,16 @@ def gen_rand_str(maxLong, maxSub):
     return (str_long, str_sub)
 
 
-print(f_timer.time_funcs([has_anagram1, has_anagram2],gen_rand_str, [1000,11],10000))
+print(f_timer.time_funcs([ has_anagram2, has_anagram3, has_anagram3_2],gen_rand_str, [1000,11],10000))
+
+
+# s1 = "vmdnmfaxkqbhxvvrcgwtjvnumpsrfkofnwbnmjbelkxmwefdkweerdppxvepbxqsqqoczleuoemizwgznrlpzzaeylxizuhgkkslmlfnrspbgoodqricguajnagngvylahrduquyrcdhpptkyyotyjyfaplifutjgncfjwgyfnmztjurbikhqduvjurkbqrhgdtgxurkkfgglduifllccyewlofsaeeetmdoivuliortwkjxrrmbwbfodnfttvgmdkitkhpvqrhrhrqodlguacxzuiybkmxddikzwdvprtxtwkabsdaixjpiwskkepklqxdicqtddvtimufrmyoygh"
+# print(len(s1))
+# s12 = s1[338:342]
+# print(s12)
+# s2 = "yogh"
+
+# print(has_anagram1(s12,s2))
+# print(has_anagram2(s12,s2,))
+# print(has_anagram3(s12,s2,))
+# print(has_anagram4(s12,s2,))
