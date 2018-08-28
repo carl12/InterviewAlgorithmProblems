@@ -11,10 +11,10 @@ def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations):
 	start = time.time()
 	last = start
 	for i in range(iterations):
-		funcInput = generatorFunc(*generatorInput)
 		if(time.time() - last > 6):
 			print([sum(t) for t in times],'On iteration',i,'of',iterations)
 			last = time.time()
+		funcInput = generatorFunc(*generatorInput)
 		for j,func in enumerate(functions):
 			run_time, res = time_func(func, copy.deepcopy(funcInput))
 			times[j].append(run_time)
