@@ -27,8 +27,10 @@ succeeds in solving the sudoku board, it’ll return true (false, otherwise).
 import copy
 import random
 import f_timer
+import json
 
 def sudoku_solve(board, depth = 0):
+
 
   # Find open square with lowest number of possible moves
   minX, minY, validNums = find_min_possible_loc(board)
@@ -44,17 +46,18 @@ def sudoku_solve(board, depth = 0):
 
   # Recursively call with all posibilities for location
   for n in validNums:
+
     board[minY][minX] = n
     if sudoku_solve(board, depth + 1):
       return True
 
+
   # Reset board value for other recursive calls in stack
   board[minY][minX] = '.'
-
   return False
   
 def find_min_possible_loc(board):
-  minPossible = 10
+  bestPossible = [0 for _ in range(10)]
   minX = -1
   minY = -1
   found = False
@@ -66,13 +69,50 @@ def find_min_possible_loc(board):
         num = len(valid_moves)
         if num <= 1:
           return (j, i, valid_moves)
-        if minPossible > num:
-          minPossible = num
+        if len(bestPossible) > num:
+          bestPossible = valid_moves
           minX = j
           minY = i
-  return (minX, minY, valid_moves)
+  return (minX, minY, bestPossible)
 
 def find_valid(board, yLoc, xLoc):
+  # determine which numbers are invalid
+  validNums = set(['1','2','3','4','5','6','7','8','9'])
+  for i in range(0,9):
+    if board[i][xLoc] != '.' and board[i][xLoc] in validNums:
+      validNums.remove(board[i][xLoc])
+    if board[yLoc][i] != '.' and board[yLoc][i] in validNums:
+      validNums.remove(board[yLoc][i])
+  
+  startX = xLoc - xLoc % 3
+  startY = yLoc - yLoc % 3
+  
+  for i in range(startY, startY+3):
+    for j in range(startX, startX+3):
+
+      if board[i][j] != '.' and board[i][j] in validNums:
+        validNums.remove(board[i][j])
+  return validNums
+
+def sudoku_solve2(board, calls = 0):
+  calls += 1
+  # pick open square
+  xLoc = -1
+  yLoc = -1
+  found = False
+  for i in range(len(board)):
+    for j in range(len(board[i])):
+      if board[i][j] == '.':
+        yLoc = i
+        xLoc = j
+        found = True
+        break
+    if found:
+      break
+
+  if xLoc == -1 and yLoc == -1:
+    return True
+  
   # determine which numbers are invalid
   validNums = set(['1','2','3','4','5','6','7','8','9'])
   for i in range(len(board)):
@@ -92,59 +132,49 @@ def find_valid(board, yLoc, xLoc):
 
       if board[i][j] != '.' and board[i][j] in validNums:
         validNums.remove(board[i][j])
-  return validNums
-
-def sudoku_solve2(board):
-
-  # pick open square
-  xLoc = -1
-  yLoc = -1
-  found = False
-  for i in range(len(board)):
-    for j in range(len(board[i])):
-      if board[i][j] == '.':
-        yLoc = i
-        xLoc = j
-        found = True
-        break
-    if found:
-      break
-
-  if xLoc == -1 and yLoc == -1:
-    return True
   
-    # determine which numbers are invalid
-  validNums = set(['1','2','3','4','5','6','7','8','9'])
-  for i in range(len(board)):
-    if board[i][xLoc] != '.' and board[i][xLoc] in validNums:
-      validNums.remove(board[i][xLoc])
-  
-  
-  for i in range(len(board[yLoc])):
-    if board[yLoc][i] != '.' and board[yLoc][i] in validNums:
-      validNums.remove(board[yLoc][i])
-  
-  modX = xLoc % 3
-  modY = yLoc % 3
-  
-  for i in range(yLoc - modY, yLoc - modY + 3):
-    for j in range(xLoc - modX, xLoc - modX + 3):
-
-      if board[i][j] != '.' and board[i][j] in validNums:
-        validNums.remove(board[i][j])
-
-  
-  if not validNums:
+  if len(validNums) == 0:
     return False
-  
   
   for n in validNums:
     board[yLoc][xLoc] = n
     
-    if(sudoku_solve(board)):
+    if(sudoku_solve2(board, calls)):
+      if(calls == 1):
+        pass
       return True
+
   board[yLoc][xLoc] = '.'
   return False
+
+def sudoku_solve3(board):
+
+  def call_next_loc(board, i, j):
+    if(i < 8):
+      return recursive_sudoku(board, i+1, j)
+    elif j < 8:
+      return recursive_sudoku(board, 0, j+1)
+    else:
+      return True
+
+  def recursive_sudoku(board, i, j):
+    if(board[i][j] != '.'):
+      return call_next_loc(board, i,j)
+    else:
+      valid = find_valid(board, i, j)
+      if len(valid) == 0: return False
+      for v in valid: 
+        board[i][j] = v
+        if call_next_loc(board, i, j):
+          return True
+      board[i][j] = '.'
+    return False
+
+
+  return recursive_sudoku(board, 0, 0)
+
+def sudoku_solve4(board):
+  pass
   
 def printSodoku(board):
   for row in board:
@@ -162,14 +192,60 @@ def gen_sodoku(max_numbers = 5):
       sudoku[y][x] = random.choice(list(valid))
   return [sudoku]
 
+def check_valid_solution(board):
+  try:
+    for i in range(0, 9):
+      missing = [True for _ in range(9)]
+      for j in range(0,9):
+        val = int(board[i][j])
+        if not missing[val -1]:
+          return False
+        else: missing[val - 1] = False
+      if any(missing): 
+        print('missing in row ', i, missing)
+        return False
+
+    for i in range(0, 9):
+      missing = [True for _ in range(9)]
+      for j in range(0,9):
+        val = int(board[j][i])
+        if not missing[val -1]:
+          return False
+        else: missing[val-1] = False
+      if any(missing): 
+        print('missing in col', i)
+        return False
+
+    for i in range(0,3):
+      for j in range(0,3):
+        missing = [True for _ in range(9)]
+        top_i = i*3
+        top_j = j*3
+        for k in range(0,3):
+          for l in range(0,3):
+            val = int(board[top_i+k][top_j+l])
+            if not missing[val -1]:
+              return False
+            else: missing[val - 1] = False
+        if any(missing): 
+          print('missing in box ', i,j)
+          return False
+    else: return True
+  except Error as err:
+    print('found .', err)
+    return False
 
 
-a = [[".",".",".","7",".",".","3",".","1"],["3",".",".","9",".",".",".",".","."],[".","4",".","3","1",".","2",".","."],[".","6",".","4",".",".","5",".","."],[".",".",".",".",".",".",".",".","."],[".",".","1",".",".","8",".","4","."],[".",".","6",".","2","1",".","5","."],[".",".",".",".",".","9",".",".","8"],["8",".","5",".",".","4",".",".","."]]
-
-# printSodoku(a)
-
+# print(find_min_possible_loc(c))
+# printSodoku(b)
+# print(int('.'))
+# print(check_valid_solution(b))
 # print(sudoku_solve(a))
+# print(sudoku_solve2(a))
+# print(sudoku_solve3(a))
+# print(b)
+# sudoku_solve3(a)
 
 
-print(f_timer.time_funcs([sudoku_solve, sudoku_solve2], gen_sodoku, [10], 100))
+print(f_timer.time_funcs([sudoku_solve2, sudoku_solve3], gen_sodoku, [10], 100))
 

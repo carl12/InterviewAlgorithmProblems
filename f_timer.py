@@ -1,21 +1,23 @@
 import time
 import copy
-def time_funcs(functions, generatorFunc, generatorInput, iterations):
-	return get_func_time_and_res(functions, generatorFunc, generatorInput, iterations)[0]
+def time_funcs(functions, generatorFunc, generatorInput, iterations, batch = False):
+	return get_func_time_and_res(functions, generatorFunc, generatorInput, iterations, batch)[0]
 
 
-def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations):
+def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations, batch = False):
 
 	times = [[] for _ in functions]
 	results = [[] for _ in functions]
 	start = time.time()
 	last = start
 	for i in range(iterations):
-		if(time.time() - last > 6):
+		print(i)
+		if(time.time() - last > 6 and not batch):
 			print([sum(t) for t in times],'On iteration',i,'of',iterations)
 			last = time.time()
 		funcInput = generatorFunc(*generatorInput)
 		for j,func in enumerate(functions):
+			print('asdf1')
 			run_time, res = time_func(func, copy.deepcopy(funcInput))
 			times[j].append(run_time)
 			results[j].append(res)
@@ -28,7 +30,7 @@ def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations):
 				print(funcInput, outputs, 'results differ')
 				return funcInput
 	finish = time.time()
-	if(finish - start > 3):
+	if(finish - start > 3 and not batch):
 		print(finish - start - sum([sum(func_times) for func_times in times]), ' is non-func processing time out of total ', finish - start)
 	return ([sum(func_times) for func_times in times], results[0])
 
