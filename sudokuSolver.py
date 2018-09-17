@@ -28,6 +28,7 @@ import copy
 import random
 import f_timer
 import json
+import time
 
 def sudoku_solve(board, depth = 0):
 
@@ -173,8 +174,38 @@ def sudoku_solve3(board):
 
   return recursive_sudoku(board, 0, 0)
 
-def sudoku_solve4(board):
-  pass
+def sudoku_solve4(board, start = time.time(), calls = 0):
+  if calls > 30 and calls % 5 == 0: print(calls)
+  # if time.time() - start > 15: 
+    # print('timeout')
+    # return False
+  num_added = 0
+  empty = 0
+  loc = [-1,-1,['0']*(len(board)+1)]
+  for i in range(len(board)):
+    for j in range(len(board[i])):
+      if board[i][j] == '.':
+        empty += 1
+        nums = find_valid(board, i, j)
+        if len(nums) == 1:
+          num_added += 1
+          board[i][j] = nums.pop()
+        elif len(nums) == 0:
+          return False
+        elif len(nums) < len(loc[2]):
+            loc = [i, j, nums]
+  if empty == 0:
+    return True
+  elif num_added > 0:
+    # if calls % 100: print(calls)
+    return sudoku_solve4(board, start, calls+1)
+  elif len(loc[2]) <= len(board):
+    for possible in loc[2]:
+      board_copy = copy.deepcopy(board)
+      board_copy[loc[0]][loc[1]] = possible
+      if sudoku_solve4(board_copy, start, calls+1):
+        return True
+  return False
   
 def printSodoku(board):
   for row in board:
@@ -235,6 +266,8 @@ def check_valid_solution(board):
     print('found .', err)
     return False
 
+# a = [['.', '.', '.', '.', '.', '.', '5', '1', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.'], ['.', '3', '.', '.', '.', '.', '.', '.', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.'], ['.', '.', '.', '.', '3', '.', '.', '.', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.'], ['.', '.', '.', '.', '.', '.', '.', '.', '.']]
+
 
 # print(find_min_possible_loc(c))
 # printSodoku(b)
@@ -243,9 +276,11 @@ def check_valid_solution(board):
 # print(sudoku_solve(a))
 # print(sudoku_solve2(a))
 # print(sudoku_solve3(a))
+# print(sudoku_solve4(a))
 # print(b)
 # sudoku_solve3(a)
 
 
-print(f_timer.time_funcs([sudoku_solve2, sudoku_solve3], gen_sodoku, [10], 100))
+
+print(f_timer.time_funcs([sudoku_solve, sudoku_solve4], gen_sodoku, [10], 40))
 
