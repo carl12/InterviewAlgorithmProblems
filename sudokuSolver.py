@@ -32,6 +32,7 @@ import time
 
 def sudoku_solve(board, depth = 0):
 
+ 
 
   # Find open square with lowest number of possible moves
   minX, minY, validNums = find_min_possible_loc(board)
