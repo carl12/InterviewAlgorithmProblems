@@ -22,7 +22,7 @@ def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations, 
 			run_time, res = time_func(func, copy.deepcopy(funcInput))
 			if(run_time > 6 and not batch):
 				print('function ', func, ' took ', run_time, 'on problem ', i)
-				print(funcInput)
+				# print(funcInput)
 				print('------')
 			times[j].append(run_time)
 			results[j].append(res)
@@ -33,7 +33,8 @@ def get_func_time_and_res(functions, generatorFunc, generatorInput, iterations, 
 				for res in results:
 					outputs += str(res[i]) + " "
 				print(funcInput, outputs, 'results differ')
-				return funcInput
+				return [""]
+				# return funcInput
 	finish = time.time()
 	if(finish - start > 3 and not batch):
 		print(finish - start - sum([sum(func_times) for func_times in times]), ' is non-func processing time out of total ', finish - start)
