@@ -88,7 +88,7 @@ def find_array_quadruplet3(arr, s):
 		counter+=1
 
 		pairs1 = sums[sum1]
-		if sol and pairs1[0][0] > sol[0]:
+		if sol and list(pairs1[0]) > sol[0:2]:
 			return [arr[i] for i in sol]
 
 		if (s-sum1) in sums:
