@@ -37,56 +37,7 @@ def find_array_quadruplet(arr, s):
           return [arr[i],arr[j],arr[k],arr[l]]
   return []
 
-
-
-def find_array_quadruplet3(arr, s):
-	# print('---')
-	counter = 0
-	if not arr or len(arr) < 4:
-		return []
-	arr.sort();
-	sums = collections.OrderedDict();
-	for i in range(len(arr)):
-		for j in range(i+1, len(arr)):
-			counter += 1
-			if arr[i] + arr[j] not in sums:
-				sums[arr[i]+arr[j]] = [(i,j)]
-			else:
-				sums[arr[i]+arr[j]].append((i,j))
-
-	sol = None
-	found = 0
-	for sum1 in sums.keys():
-		counter+=1
-		# if sum1 > s/2:
-		# 	break
-
-		if (s-sum1) in sums:
-			pairs1 = sums[sum1]
-			pairs2 = sums[s-sum1]
-			if not sol or pairs1[0][0] <= sol[0]:
-				for i in range(len(pairs1)):
-					if sol and list(pairs1[i]) > sol[0:2]:
-						break
-					pair1 = pairs1[i]
-					for pair2 in pairs2:
-						if sol and list(pairs1[i]) == sol[0:2] and list(pair2) > sol[2:4]:
-							break
-						counter += 1
-						if(pair1[0] not in pair2 and pair1[1] not in pair2):
-							new = sorted([pair1[0], pair1[1], pair2[0], pair2[1]])
-							found +=1
-							sol = new if not sol or new < sol else sol
-			else:
-				# print(counter/len(arr)**2)
-				return [arr[i] for i in sol]
-
-	# if(counter > len(arr)**1.5):
-	# print(counter/len(arr)**2)
-	return [arr[i] for i in sol] if sol else []
-
-
-def find_array_quadruplet5(arr, s):
+def find_array_quadruplet2(arr, s):
 	if not arr or len(arr) < 4:
 		return []
 	arr.sort()
@@ -116,6 +67,50 @@ def find_array_quadruplet5(arr, s):
 						return sorted([arr[i],arr[j],arr[secondPair[0]],arr[secondPair[1]]])
 	return []
 
+
+def find_array_quadruplet3(arr, s):
+	counter = 0
+	if not arr or len(arr) < 4:
+		return []
+	arr.sort();
+	sums = collections.OrderedDict();
+	for i in range(len(arr)):
+		for j in range(i+1, len(arr)):
+			counter += 1
+			if arr[i] + arr[j] not in sums:
+				sums[arr[i]+arr[j]] = [(i,j)]
+			else:
+				sums[arr[i]+arr[j]].append((i,j))
+
+	sol = None
+	found = 0
+	for sum1 in sums.keys():
+		counter+=1
+
+		if (s-sum1) in sums:
+			pairs1 = sums[sum1]
+			pairs2 = sums[s-sum1]
+			if not sol or pairs1[0][0] <= sol[0]:
+				for i in range(len(pairs1)):
+					if sol and list(pairs1[i]) > sol[0:2]:
+						break
+					pair1 = pairs1[i]
+					for pair2 in pairs2:
+						if sol and list(pairs1[i]) == sol[0:2] and list(pair2) > sol[2:4]:
+							break
+						counter += 1
+						if(pair1[0] not in pair2 and pair1[1] not in pair2):
+							new = sorted([pair1[0], pair1[1], pair2[0], pair2[1]])
+							found +=1
+							sol = new if not sol or new < sol else sol
+			else:
+				return [arr[i] for i in sol]
+
+	return [arr[i] for i in sol] if sol else []
+
+
+
+
 def problem_builder(maxLen, maxSum):
 	roll = random.randint(1,3)
 	if False:
@@ -138,31 +133,24 @@ def gauss_problem(maxLen, avgSum, stdDev, hardness):
 
 
 
-a = [-3687, -3683, -3665, -3584, -3373, -3335, -3274, -3221, -3189, -3010, -2879, -2744, -2668, -2649, -2592, -2570, -2457, -2450, -2401, -2128, -2092, -2048, -1982, -1973, -1721, -1664, -1619, -1601, -1109, -1033, -960, -948, -928, -908, -902, -818, -788, -782, -673, -665, -638, -569, -296, -241, -219, -111, 193, 260, 453, 520, 611, 675, 809, 822, 985, 1163, 1211, 1285, 1331, 1394, 1480, 1559, 1594, 1697, 1734, 1787, 1965, 1969, 2017, 2057, 2063, 2074, 2263, 2270, 2331, 2343, 2515, 2523, 2589, 2591, 2634, 2643, 2703, 2867, 2876, 2973, 2997, 3396, 3461, 3485, 3682, 3722, 3730]
+a = [-3687, -3683, -3665, -3584, -3373, -3335, -3274, -3221, -3189, 
+-3010, -2879, -2744, -2668, -2649, -2592, -2570, -2457, -2450, -2401, 
+-2128, -2092, -2048, -1982, -1973, -1721, -1664, -1619, -1601, -1109, 
+-1033, -960, -948, -928, -908, -902, -818, -788, -782, -673, -665, 
+-638, -569, -296, -241, -219, -111, 193, 260, 453, 520, 611, 675, 
+809, 822, 985, 1163, 1211, 1285, 1331, 1394, 1480, 1559, 1594, 1697, 
+1734, 1787, 1965, 1969, 2017, 2057, 2063, 2074, 2263, 2270, 2331, 2343, 
+2515, 2523, 2589, 2591, 2634, 2643, 2703, 2867, 2876, 2973, 2997, 3396, 
+3461, 3485, 3682, 3722, 3730]
+
 target = 10597
 
 
-# print(find_array_quadruplet(a, 17))
-# print(find_array_quadruplet2(a, 17))
-# print(find_array_quadruplet3(a, target))
-# print(find_array_quadruplet(a,target))
 
-algorithms = [find_array_quadruplet3, find_array_quadruplet5]
+algorithms = [find_array_quadruplet2, find_array_quadruplet3]
 # print(sorted([[1,2],[0,2],[3,5],[12,5],[0,0],[22,0]]))
 # print(f_timer.time_funcs(algorithms, problem_builder, [100, 30000], 1000, True))
 # print(f_timer.time_funcs(algorithms, problem_builder, [200, 30000], 1000, True))
 # print(f_timer.time_funcs(algorithms, problem_builder, [400, 30000], 100, True))
 print(f_timer.time_funcs(algorithms, problem_builder, [1600, 300], 100, False))
 
-# win = 0
-# total = 100
-# for i in range(total):
-# 	if len(find_array_quadruplet3(*problem_builder(*[800,3000]))) > 0:
-# 		win+=1
-
-# print(win/total)
-
-
-# target = sum([-375, -119, 373, 375])
-
-# print(find_array_quadruplet3(a,target))
