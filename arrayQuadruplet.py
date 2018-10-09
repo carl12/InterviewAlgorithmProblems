@@ -87,24 +87,25 @@ def find_array_quadruplet3(arr, s):
 	for sum1 in sums.keys():
 		counter+=1
 
+		pairs1 = sums[sum1]
+		if sol and pairs1[0][0] > sol[0]:
+			return [arr[i] for i in sol]
+
 		if (s-sum1) in sums:
-			pairs1 = sums[sum1]
 			pairs2 = sums[s-sum1]
-			if not sol or pairs1[0][0] <= sol[0]:
-				for i in range(len(pairs1)):
-					if sol and list(pairs1[i]) > sol[0:2]:
+			for i in range(len(pairs1)):
+				if sol and list(pairs1[i]) > sol[0:2]:
+					break
+				pair1 = pairs1[i]
+				for pair2 in pairs2:
+					if sol and list(pairs1[i]) == sol[0:2] and list(pair2) > sol[2:4]:
 						break
-					pair1 = pairs1[i]
-					for pair2 in pairs2:
-						if sol and list(pairs1[i]) == sol[0:2] and list(pair2) > sol[2:4]:
-							break
-						counter += 1
-						if(pair1[0] not in pair2 and pair1[1] not in pair2):
-							new = sorted([pair1[0], pair1[1], pair2[0], pair2[1]])
-							found +=1
-							sol = new if not sol or new < sol else sol
-			else:
-				return [arr[i] for i in sol]
+					counter += 1
+					if(pair1[0] not in pair2 and pair1[1] not in pair2):
+						new = sorted([pair1[0], pair1[1], pair2[0], pair2[1]])
+						found +=1
+						sol = new if not sol or new < sol else sol
+
 
 	return [arr[i] for i in sol] if sol else []
 
